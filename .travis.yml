@@ -3,6 +3,8 @@ language: node_js
 node_js:
   - "8"
   - "10"
+addons:
+  firefox: "latest"
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libsecret-1-0
@@ -12,6 +14,7 @@ install:
   - npm install
 script:
   - npm run test:node
+  - npm run test:browser
 cache:
   directories:
     - "node_modules"
