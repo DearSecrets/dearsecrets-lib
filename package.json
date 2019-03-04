@@ -7,7 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "karma start karma.conf.js --single-run",
+    "test:browser": "karma start karma.conf.js --single-run",
+    "test:node": "./jasmine-node.js",
     "build:client": "webpack"
   },
   "repository": {
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "jasmine": "^3.3.1",
+    "jasmine-console-reporter": "^3.1.0",
     "karma": "^4.0.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.1.0",
