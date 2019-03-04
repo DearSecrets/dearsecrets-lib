@@ -1,4 +1,4 @@
-import { DearSecretsNodeCrypto } from "../src/nodecrypto.js";
+const DearSecretsNodeCrypto = require("../src/nodecrypto.js");
 
 const staticSymmetricKey = "EVdcI1N8+KRNSECmt6v7EvdDqg7WJjLgbEsPzq2GBVs="
 
@@ -12,9 +12,83 @@ const staticRsaEncryptedData = "ArkKlAk28HMIp58g7by0ZopIe5AavxNjjeNncuNf0f9WYrQJ
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
+describe("aes-gcm [encrypt/decrypt]", () => {
+    it("should generate symmetric crypto key", async () => {
+    });
+
+    it("should successfully encrypt data", async () => {
+        const dearSecrets = new DearSecretsNodeCrypto();
+
+        const data = Buffer.from("my secret");
+        const iv = staticInitializationVector;
+        const key = Buffer.from(staticSymmetricKey, "base64");
+
+        const cipherText = await dearSecrets.aesGcmEncrypt(data, key, iv);
+
+        expect(cipherText.toString("base64")).toEqual("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQABAgMEBQYHCAkKCw==");
+    });
+
+    it("should successfully decrypt data", async () => {
+        const dearSecrets = new DearSecretsNodeCrypto();
+
+        const data = Buffer.from("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQABAgMEBQYHCAkKCw==", "base64");
+        const key = Buffer.from(staticSymmetricKey, "base64");
+
+        const encryptData = data.slice(0, data.length - 28);
+        const tag = data.slice(data.length - 28, data.length - 12);
+        const iv = data.slice(data.length - 12)
+
+        const decipherText = await dearSecrets.aesGcmDecrypt(encryptData, key, iv, tag);
+
+        expect(decipherText.toString("utf8")).toEqual("my secret");
+    });
+});
+
+describe("rsa [encrypt/decrypt]", () => {
+
+    it("should generate asymmetric crypto key pair in to jwk", async () => {
+
+    });
+
+    it("should successfully encrypt and decrypt data with rsa key pair", async () => {
+        const dearSecrets = new DearSecretsNodeCrypto();
+
+        const data = Buffer.from("my secret");
+        const publicKey = Buffer.from(staticAsymmetricPublicKey, "base64");
+        const privateKey = Buffer.from(staticAsymmetricPrivateKey, "base64");
+
+        const cipherText = await dearSecrets.rsaEncrypt(data, staticAsymmetricPublicKey);
+
+        const decipherText = await dearSecrets.rsaDecrypt(cipherText, staticAsymmetricPrivateKey);
+
+        const buffer = Buffer.from(decipherText);
+
+        expect(buffer.toString("utf8")).toEqual("my secret");
+    });
+
+    it("should successfully decrypt data with rsa private key", async () => {
+        const dearSecrets = new DearSecretsNodeCrypto();
+
+        const cipherText = Buffer.from(staticRsaEncryptedData, "base64");
+        const privateKey = Buffer.from(staticAsymmetricPrivateKey, "base64");
+        const decipherText = await dearSecrets.rsaDecrypt(cipherText, staticAsymmetricPrivateKey);
+
+        const buffer = Buffer.from(decipherText);
+
+        expect(buffer.toString("utf8")).toEqual("my secret");
+    });
+});
+
 describe("hashing functions", () => {
 
     it("should derive key using node pbkdf2", async () => {
         const dearSecrets = new DearSecretsNodeCrypto();
+
+        const password = Buffer.from("password");
+        const salt = Buffer.from("qwertyuiopasdfgh");
+
+        const derivedKey = await dearSecrets.pbkdf2(password, salt);
+
+        expect(derivedKey.toString("base64")).toEqual("EVdcI1N8+KRNSECmt6v7EvdDqg7WJjLgbEsPzq2GBVs=");
     })
 });
