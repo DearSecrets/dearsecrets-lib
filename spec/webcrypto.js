@@ -25,25 +25,26 @@ describe("aes-gcm [encrypt/decrypt]", () => {
     it("should successfully encrypt data", async () => {
         const dearSecrets = new DearSecretsWebCrypto();
 
-        const data = new TextEncoder().encode("my secret");
+        const data = Buffer.from("my secret");
         const iv = staticInitializationVector;
         const key = Buffer.from(staticSymmetricKey, "base64");
 
-        const cipherText = await dearSecrets.aesGcmEncrypt(data, key, iv.buffer);
+        const cipherText = await dearSecrets.aesGcmEncrypt(data, key, iv);
 
-        const buffer = Buffer.from(cipherText);
+        const cipherBuffer = Buffer.from(cipherText);
+        const ivBuffer = Buffer.from(iv);
 
-        expect(buffer.toString("base64")).toEqual("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQ==");
+        expect(Buffer.concat([cipherBuffer, ivBuffer]).toString("base64")).toEqual("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQABAgMEBQYHCAkKCw==");
     });
 
     it("should successfully decrypt data", async () => {
         const dearSecrets = new DearSecretsWebCrypto();
 
-        const data = new Uint8Array(Buffer.from("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQ==", "base64"));
+        const data = Buffer.from("bbezqrXEZvXE6M1THM5bZyKYqYB13OFfrQ==", "base64");
         const iv = staticInitializationVector;
         const key = Buffer.from(staticSymmetricKey, "base64");
 
-        const decipherText = await dearSecrets.aesGcmDecrypt(data, key, iv.buffer);
+        const decipherText = await dearSecrets.aesGcmDecrypt(data, key, iv);
 
         const buffer = Buffer.from(decipherText);
 
@@ -58,10 +59,6 @@ describe("rsa [encrypt/decrypt]", () => {
 
         const keyPair = await dearSecrets.rsaGenerateKeyPair();
 
-        // const publicKey = Buffer.from(keyPair[0]).toString('base64');
-        // const privateKey = Buffer.from(keyPair[1]).toString('base64');
-        // console.log(publicKey, privateKey);
-
         expect(keyPair[0]).toEqual(jasmine.any(ArrayBuffer));
         expect(keyPair[1]).toEqual(jasmine.any(ArrayBuffer));
     });
@@ -69,7 +66,7 @@ describe("rsa [encrypt/decrypt]", () => {
     it("should successfully encrypt and decrypt data with rsa key pair", async () => {
         const dearSecrets = new DearSecretsWebCrypto();
 
-        const data = new TextEncoder().encode("my secret");
+        const data = Buffer.from("my secret");
         const publicKey = Buffer.from(staticAsymmetricPublicKey, "base64");
         const privateKey = Buffer.from(staticAsymmetricPrivateKey, "base64");
 
@@ -101,8 +98,8 @@ describe("hashing functions", () => {
     it("should derive key using pbkdf2", async () => {
         const dearSecrets = new DearSecretsWebCrypto();
 
-        const password = new TextEncoder().encode("password");
-        const salt = new TextEncoder().encode("qwertyuiopasdfgh");
+        const password = Buffer.from("password");
+        const salt = Buffer.from("qwertyuiopasdfgh");
         const derivedKey = await dearSecrets.pbkdf2(password, salt);
 
         const buffer = Buffer.from(derivedKey);
