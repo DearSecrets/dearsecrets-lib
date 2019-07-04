@@ -9,7 +9,9 @@
   "scripts": {
     "test:browser": "karma start karma.conf.js --single-run",
     "test:node": "./jasmine-node.js",
-    "build:client": "webpack"
+    "build:client": "webpack",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -28,7 +30,8 @@
     "keytar": "^4.3.0",
     "lowdb": "^1.0.0",
     "node-fetch": "^2.3.0",
-    "node-forge": "^0.7.6"
+    "node-forge": "^0.7.6",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "jasmine": "^3.3.1",
@@ -41,5 +44,6 @@
     "karma-webpack": "^3.0.5",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
-  }
+  },
+  "snyk": true
 }
