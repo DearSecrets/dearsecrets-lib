@@ -24,7 +24,7 @@
   "dependencies": {
     "buffer": "^5.2.1",
     "jsrp": "^0.2.4",
-    "jwk-to-pem": "^2.0.1",
+    "jwk-to-pem": "^2.0.6",
     "keytar": "^4.3.0",
     "lowdb": "^1.0.0",
     "node-fetch": "^2.3.0",
